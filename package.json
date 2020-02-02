@@ -1,0 +1,26 @@
+{
+  "name": "conway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "fileserver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/embrqq/Conway.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/embrqq/Conway/issues"
+  },
+  "homepage": "https://github.com/embrqq/Conway#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2"
+  }
+}

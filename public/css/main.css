@@ -1,0 +1,82 @@
+body {
+  font-family: "M PLUS Rounded 1c";
+
+  width:100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+#react{
+  flex: 1 1 auto;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.nav{
+  display: flex;
+  flex-direction: row;
+
+  width: 100%;
+  height: 50px;
+
+  border-bottom: 1px solid #bbbbbb;
+}
+
+.nav-button{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px 5px 5px 5px;
+}
+
+.nav-button button{
+  background-color: #bbbbbb;
+  height: 100%;
+}
+
+.speed-slider{
+
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.range-slider {
+
+  width: 100%;
+  background: #dddddd;
+  outline: none;
+  opacity: 0.5;
+  transition: opacity .3s;
+
+  height: 15px;
+  border-radius: 5px;
+
+}
+
+.range-slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+  cursor: pointer;
+}
+
+#grid{
+  flex: 1 1 auto;
+  margin: 20px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.tile-row{
+  display: flex;
+  flex-direction: row;
+}
+
+.tile{
+  background-color: #dddddd;
+}
