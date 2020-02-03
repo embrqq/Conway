@@ -58,12 +58,12 @@ body {
 }
 
 .range-slider:hover {
-  opacity: 1; /* Fully shown on mouse-over */
+  opacity: 1;
   cursor: pointer;
 }
 
 #grid{
-  flex: 1 1 auto;
+  flex: 1 1 50%;
   margin: 20px 20px 20px 20px;
   display: flex;
   flex-direction: column;
@@ -77,6 +77,6 @@ body {
   flex-direction: row;
 }
 
-.tile{
-  background-color: #dddddd;
+.tile-alive{
+  background-color: green;
 }

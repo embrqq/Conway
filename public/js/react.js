@@ -10,10 +10,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var tileDim = 10;
 var borderDim = 1;
+
 function Tile(props) {
 
   return React.createElement("div", {
-    className: "tile",
+    className: "tile-" + (props.alive ? 'alive' : 'dead'),
     key: props.key,
     onClick: props.onClick,
     style: {
@@ -24,58 +25,22 @@ function Tile(props) {
   });
 }
 
-var Conway = function (_React$Component) {
-  _inherits(Conway, _React$Component);
+var Grid = function (_React$Component) {
+  _inherits(Grid, _React$Component);
 
-  function Conway(props) {
-    _classCallCheck(this, Conway);
+  function Grid(props) {
+    _classCallCheck(this, Grid);
 
-    var _this = _possibleConstructorReturn(this, (Conway.__proto__ || Object.getPrototypeOf(Conway)).call(this, props));
-
-    console.log("Creating grid of dimensions (", props.numRows, ",", props.numCols, ")");
-
-    var grid = [];
-
-    for (var r = 0; r < props.numRows; r++) {
-      var row = Array(props.numCols).fill(false);
-      grid[r] = row;
-    }
-
-    console.log("Initialized Grid.");
-    console.log(grid);
-
-    _this.state = {
-      numCols: props.numCols,
-      numRows: props.numRows,
-      grid: grid
-    };
-    return _this;
+    return _possibleConstructorReturn(this, (Grid.__proto__ || Object.getPrototypeOf(Grid)).call(this, props));
   }
 
-  _createClass(Conway, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      console.log("Mounted grid, update grid size");
-      var height = document.getElementById('grid').clientHeight;
-      var width = document.getElementById('grid').clientWidth;
-      var numRows = Math.round(height / (2 * borderDim + tileDim));
-      var numCols = Math.round(width / (2 * borderDim + tileDim));
-      console.log("Resizing to: (", numRows, ",", numCols, ")");
-      this.setState({
-        numCols: numCols,
-        numRows: numRows
-      });
-    }
-  }, {
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      console.log(this.state);
-      console.log("Updated!");
-    }
-  }, {
+  _createClass(Grid, [{
     key: "initializeGrid",
-    value: function initializeGrid(numRows, numCols) {
+    value: function initializeGrid(grid) {
       var _this2 = this;
+
+      var numRows = grid.length;
+      var numCols = grid[0].length;
 
       var rows = [];
       var numTiles = 0;
@@ -85,8 +50,8 @@ var Conway = function (_React$Component) {
         var row = [];
 
         var _loop2 = function _loop2(c) {
-          row.push(React.createElement(Tile, { key: ++numTiles, onClick: function onClick() {
-              return _this2.updateTile(r, c);
+          row.push(React.createElement(Tile, { alive: grid[r][c], key: ++numTiles, onClick: function onClick() {
+              return _this2.props.updateTile(r, c);
             } }));
         };
 
@@ -107,20 +72,10 @@ var Conway = function (_React$Component) {
       return rows;
     }
   }, {
-    key: "updateTile",
-    value: function updateTile(row, col) {
-
-      console.log("Updating tile: (", row, ",", col, ")");
-      var grid = this.state.grid;
-      grid[row][col] = !grid[row][col];
-
-      this.setState({ grid: grid });
-    }
-  }, {
     key: "render",
     value: function render() {
 
-      var rows = this.initializeGrid(this.state.numRows, this.state.numCols);
+      var rows = this.initializeGrid(this.props.grid, this.props.updateTile);
 
       return React.createElement(
         "div",
@@ -130,42 +85,181 @@ var Conway = function (_React$Component) {
     }
   }]);
 
-  return Conway;
+  return Grid;
 }(React.Component);
 
-var PageWrapper = function (_React$Component2) {
-  _inherits(PageWrapper, _React$Component2);
+var Conway = function (_React$Component2) {
+  _inherits(Conway, _React$Component2);
 
-  function PageWrapper(props) {
-    _classCallCheck(this, PageWrapper);
+  function Conway(props) {
+    _classCallCheck(this, Conway);
 
-    var _this3 = _possibleConstructorReturn(this, (PageWrapper.__proto__ || Object.getPrototypeOf(PageWrapper)).call(this, props));
+    var _this3 = _possibleConstructorReturn(this, (Conway.__proto__ || Object.getPrototypeOf(Conway)).call(this, props));
 
-    _this3.state = {};
+    var grid = [[false, false, false], [false, false, false], [false, false, false]];
+
+    _this3.state = {
+      ver: 0,
+      grid: grid
+    };
 
     return _this3;
   }
 
-  _createClass(PageWrapper, [{
+  _createClass(Conway, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+
+      console.log("Resizing grid on mount.");
+      this.resize();
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+
+      console.log("State updated.");
+      console.log("New state:", this.state);
+    }
+  }, {
+    key: "resize",
+    value: function resize() {
+      var height = document.getElementById('grid').clientHeight;
+      var width = document.getElementById('grid').clientWidth;
+      var numRows = Math.round(height / (2 * borderDim + tileDim));
+      var numCols = Math.round(width / (2 * borderDim + tileDim));
+      console.log("Resizing to: (", numRows, ",", numCols, ")");
+      var grid = this.resizeGrid(numRows, numCols);
+      this.setState({
+        ver: this.state.ver + 1,
+        numCols: numCols,
+        numRows: numRows,
+        grid: grid
+      });
+    }
+  }, {
+    key: "resizeGrid",
+    value: function resizeGrid(numRows, numCols) {
+
+      console.log("Resizing grid.");
+
+      var grid = this.state.grid;
+
+      //Remove rows if necessary by slicing.
+      grid = grid.slice(0, numRows);
+      //Add rows if necessary
+      if (grid.length < numRows) {
+        for (var r = grid.length; r < numRows; r++) {
+          if (grid[r] == undefined) {
+            grid[r] = Array(numCols).fill(false);
+          }
+        }
+      }
+
+      for (var _r = 0; _r < numRows; _r++) {
+        //Remove cols if necessary
+        grid[_r] = grid[_r].slice(0, numCols);
+        //Add cols if necessary
+        if (grid[_r].length < numCols) {
+          console.log("Appending to row ", _r);
+          grid[_r] = grid[_r].concat(Array(numCols - grid[_r].length).fill(false));
+        }
+      }
+
+      console.log("Resized grid:", grid);
+
+      return grid;
+    }
+  }, {
+    key: "simulate",
+    value: function simulate() {
+
+      console.log("Running an iteration of simulation.");
+      console.log("State before simulation:", this.state);
+
+      var numRows = this.state.numRows;
+      var numCols = this.state.numCols;
+      var grid = [];
+
+      for (var r = 0; r < numRows; r++) {
+        grid.push(this.state.grid[r].slice(0, numCols));
+      }
+
+      for (var _r2 = 0; _r2 < numRows; _r2++) {
+        for (var c = 0; c < numCols; c++) {
+
+          var neighbors = 0;
+          //Check num neighbors
+          for (var i = -1; i < 2; i++) {
+            for (var j = -1; j < 2; j++) {
+              if (i == 0 && j == 0) continue;
+              var _row = _r2 + i;
+              var col = c + j;
+              if (this.state.grid[(_row % numRows + numRows) % numRows][(col % numCols + numCols) % numCols]) neighbors++;
+            }
+          }
+
+          if (grid[_r2][c]) {
+            console.log("Live cell at: (", _r2, ",", c, ") with ", neighbors, " neighbors.");
+          }
+          //If the cell is alive and has right number of neighbors it maintains itself:
+          if (grid[_r2][c] && (neighbors == 2 || neighbors == 3)) {
+            console.log("Maintaining cell: (", _r2, ",", c, ")");
+            grid[_r2][c] = true;
+          }
+          //If the cell is dead but has enough neighbors it comes alive:
+          else if (!grid[_r2][c] && neighbors == 3) {
+              console.log("Reviving cell: (", _r2, ",", c, ")");
+              grid[_r2][c] = true;
+            }
+            //Else it dies
+            else {
+                grid[_r2][c] = false;
+              }
+
+          //TODO: ADD optimization by keeping track of live cells and only checking cells near those when simulating.
+        }
+      }
+
+      console.log("Grid after simulation:");
+      console.log(grid);
+
+      this.setState({ ver: this.state.ver + 1, grid: grid });
+    }
+  }, {
+    key: "updateTile",
+    value: function updateTile(row, col) {
+
+      console.log("Updating tile: (", row, ",", col, ")");
+      var grid = this.state.grid;
+      grid[row][col] = !grid[row][col];
+
+      this.setState({
+        ver: this.state.ver + 1,
+        grid: grid
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-
-      var numRows = 5;
-      var numCols = 5;
+      var _this4 = this;
 
       return React.createElement(
         React.Fragment,
         null,
-        React.createElement(Nav, null),
-        React.createElement(Conway, {
-          numRows: numRows,
-          numCols: numCols
+        React.createElement(Nav, { simulate: function simulate() {
+            _this4.simulate(_this4.state);
+          } }),
+        React.createElement(Grid, {
+          grid: this.state.grid,
+          updateTile: function updateTile(row, col) {
+            return _this4.updateTile(row, col);
+          }
         })
       );
     }
   }]);
 
-  return PageWrapper;
+  return Conway;
 }(React.Component);
 
-ReactDOM.render(React.createElement(PageWrapper, null), document.getElementById('react'));
+ReactDOM.render(React.createElement(Conway, null), document.getElementById('react'));

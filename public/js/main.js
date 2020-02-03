@@ -42,12 +42,13 @@ var Nav = function (_React$Component) {
   _createClass(Nav, [{
     key: "render",
     value: function render() {
+      var _this2 = this;
 
       return React.createElement(
         "div",
         { className: "nav" },
         React.createElement(NavButton, { text: "\u25BA", onClick: function onClick() {
-            console.log("Pressed Run!");
+            console.log("Pressed Run!");_this2.props.simulate();
           } }),
         React.createElement(NavButton, { text: "\u275A\u275A", onClick: function onClick() {
             console.log("Pressed Pause!");

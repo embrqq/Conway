@@ -36,7 +36,7 @@ class Nav extends React.Component {
 
     return (
       <div className="nav">
-        <NavButton text="&#9658;" onClick={() => {console.log("Pressed Run!")}}/>
+        <NavButton text="&#9658;" onClick={() => {console.log("Pressed Run!"); this.props.simulate()}}/>
         <NavButton text="&#10074;&#10074;" onClick={() => {console.log("Pressed Pause!")}}/>
         <NavButton text="Reset" onClick={() => {console.log("Pressed Reset!")}}/>
         <SpeedSlider />
